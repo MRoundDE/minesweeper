@@ -1,2 +1,5 @@
-# minesweeper
-A libsdl2 implementation of Minesweeper
+# Minesweeper
+
+Yet another
+[Minesweeper](https://en.wikipedia.org/wiki/Minesweeper_(video_game))
+implementation using [libsdl2](https://libsdl.org/).
