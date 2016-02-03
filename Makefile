@@ -22,7 +22,7 @@ all: $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
 
 clean:
-	rm -f $(TARGET) src/*.o
+	rm -f $(TARGET) src/*.o src/*.orig src/*.gsh
 
 format-source-code:
 	astyle $(ASTYLE_FLAGS) $(SRCS) $(HEADS)
