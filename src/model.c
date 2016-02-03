@@ -1,7 +1,7 @@
 #include "model.h"
 
-enum field_state **field_static = NULL;
-enum field_state **field_dynamic = NULL;
+state_t **field_static = NULL;
+state_t **field_dynamic = NULL;
 
 // Not visible outside this unit
 int FIELD_SIZE_X = 0;
@@ -13,21 +13,13 @@ void initialize_model(int number_of_mines, int field_size_x,
   FIELD_SIZE_Y = field_size_y;
 
   // Allocate memory
-  field_static =
-      (enum field_state **) malloc(FIELD_SIZE_X *
-                                   sizeof(enum field_state *));
+  field_static = (state_t **) malloc(FIELD_SIZE_X * sizeof(state_t *));
   for (int x = 0; x < FIELD_SIZE_X; x++) {
-    field_static[x] =
-        (enum field_state *) malloc(FIELD_SIZE_Y *
-                                    sizeof(enum field_state));
+    field_static[x] = (state_t *) malloc(FIELD_SIZE_Y * sizeof(state_t));
   }
-  field_dynamic =
-      (enum field_state **) malloc(FIELD_SIZE_X *
-                                   sizeof(enum field_state *));
+  field_dynamic = (state_t **) malloc(FIELD_SIZE_X * sizeof(state_t *));
   for (int x = 0; x < FIELD_SIZE_X; x++) {
-    field_dynamic[x] =
-        (enum field_state *) malloc(FIELD_SIZE_Y *
-                                    sizeof(enum field_state));
+    field_dynamic[x] = (state_t *) malloc(FIELD_SIZE_Y * sizeof(state_t));
   }
 
   // initialize all fields empty and hidden

@@ -9,10 +9,9 @@ void initialize_view(void) {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     printf("SDL initialization error: %s\n", SDL_GetError());
   }
-  window =
-      SDL_CreateWindow("Minesweeper", SDL_WINDOWPOS_UNDEFINED,
-                       SDL_WINDOWPOS_UNDEFINED, window_width,
-                       window_height, 0);
+  window = SDL_CreateWindow("Minesweeper", SDL_WINDOWPOS_UNDEFINED,
+                            SDL_WINDOWPOS_UNDEFINED, window_width,
+                            window_height, 0);
   if (window == NULL) {
     printf("SDL window creation error: %s\n", SDL_GetError());
   }
