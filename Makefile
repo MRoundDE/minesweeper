@@ -2,7 +2,7 @@ CC ?= gcc
 
 TARGET = minesweeper
 
-CFLAGS = -std=c11 -pedantic -Wall -Wextra
+CFLAGS = -std=c99 -pedantic -Wall -Wextra
 LDFLAGS = -lSDL2
 
 # See http://astyle.sourceforge.net/astyle.html
