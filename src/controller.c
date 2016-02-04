@@ -48,8 +48,33 @@ void control_game(void) {
 }
 
 
+void recursive_select(int x, int y) {
+  field_dynamic[x][y] = SELECTED;
+
+  coord_t coords[] = {
+    {.x = x  , .y = y-1}, // North
+    {.x = x+1, .y = y-1}, // North-East
+    {.x = x+1, .y = y  }, // East
+    {.x = x+1, .y = y+1}, // South-East
+    {.x = x  , .y = y+1}, // South
+    {.x = x-1, .y = y+1}, // South-West
+    {.x = x-1, .y = y  }, // West
+    {.x = x-1, .y = y-1}  // North-West
+  };
+
+  for (int i = 0; i < 8; i++) {
+    if ((coords[i].x >= 0) && (coords[i].x < get_field_size_x())
+        && (coords[i].y >= 0) && (coords[i].y < get_field_size_y())) {
+      field_select(coords[i].x, coords[i].y);
+    }
+  }
+}
+
+
 void field_select(int x, int y) {
-  if ((field_dynamic[x][y] == HIDDEN) && (field_dynamic[x][y] != FLAG)) {
+  if ((field_dynamic[x][y] == HIDDEN) && (field_static[x][y] == EMPTY)) {
+    recursive_select(x, y);
+  } else if ((field_dynamic[x][y] == HIDDEN) && (field_dynamic[x][y] != FLAG)) {
     field_dynamic[x][y] = SELECTED;
   }
 }
