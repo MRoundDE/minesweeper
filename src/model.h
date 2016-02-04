@@ -4,7 +4,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-typedef enum field_state {
+typedef struct {
+  int x;
+  int y;
+} coord_t;
+
+typedef enum {
   // static states
   EMPTY = 0, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, MINE,
   // dynamic states
