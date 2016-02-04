@@ -3,6 +3,7 @@
 SDL_Window *window = NULL;
 SDL_Surface **symbols = NULL;
 
+
 void initialize_view(void) {
   int window_width = get_field_size_x() * FIELD_WIDTH;
   int window_height = get_field_size_y() * FIELD_HEIGHT;
@@ -43,6 +44,7 @@ void initialize_view(void) {
   }
 }
 
+
 void update_view(void) {
   SDL_Rect offset;
   SDL_Surface *symbol;
@@ -68,6 +70,7 @@ void update_view(void) {
   SDL_UpdateWindowSurface(window);
 }
 
+
 void free_view(void) {
   // free allocated memory
   for (int i = 0; i <= HIDDEN; i++) {
@@ -77,6 +80,7 @@ void free_view(void) {
   SDL_DestroyWindow(window);
   SDL_Quit();
 }
+
 
 void get_field_coordinates(SDL_Event e, int *x, int *y) {
   *x = 0;

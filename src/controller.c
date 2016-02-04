@@ -1,5 +1,6 @@
 #include "controller.h"
 
+
 void control_game(void) {
   SDL_Event e;
   int quit = 0;
@@ -46,11 +47,13 @@ void control_game(void) {
   }
 }
 
+
 void field_select(int x, int y) {
   if ((field_dynamic[x][y] == HIDDEN) && (field_dynamic[x][y] != FLAG)) {
     field_dynamic[x][y] = SELECTED;
   }
 }
+
 
 void field_flag(int x, int y) {
   if (field_dynamic[x][y] == HIDDEN) {
@@ -59,6 +62,7 @@ void field_flag(int x, int y) {
     field_dynamic[x][y] = HIDDEN;
   }
 }
+
 
 void field_explode(int x, int y) {
   // select all mines to show them to the user
@@ -73,6 +77,7 @@ void field_explode(int x, int y) {
 
   printf("\n\nYOU LOST!!!\n\n");
 }
+
 
 int check_win(void) {
   int mines_flagged_correct = 0;

@@ -1,14 +1,16 @@
 #include "model.h"
 
+// Project global fields
 state_t **field_static = NULL;
 state_t **field_dynamic = NULL;
+
 
 // Not visible outside this unit
 int FIELD_SIZE_X = 0;
 int FIELD_SIZE_Y = 0;
 
-void initialize_model(int number_of_mines, int field_size_x,
-                      int field_size_y) {
+
+void initialize_model(int number_of_mines, int field_size_x, int field_size_y) {
   FIELD_SIZE_X = field_size_x;
   FIELD_SIZE_Y = field_size_y;
 
@@ -74,6 +76,7 @@ void initialize_model(int number_of_mines, int field_size_x,
   }
 }
 
+
 void free_model(void) {
   // Deallocate memory
   if (field_static != NULL) {
@@ -94,9 +97,11 @@ void free_model(void) {
   }
 }
 
+
 int get_field_size_x(void) {
   return FIELD_SIZE_X;
 }
+
 
 int get_field_size_y(void) {
   return FIELD_SIZE_Y;
