@@ -8,6 +8,7 @@ LDFLAGS = -lSDL2
 # See http://astyle.sourceforge.net/astyle.html
 ASTYLE_FLAGS = --style=google \
                --indent=spaces=2 \
+               --max-code-length=80 \
                --verbose \
                --convert-tabs
 
