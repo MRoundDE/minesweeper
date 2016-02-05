@@ -5,9 +5,33 @@ SDL_Window *window = NULL;
 SDL_Surface **symbols = NULL;
 
 // Not visible outside this unit
-TTF_Font *font40pt = NULL;
+TTF_Font *font_field = NULL;
 
+SDL_Color COLOR_RED = {.r = 255, .g = 0, .b = 0, .a = 255};
+SDL_Color COLOR_GREEN = {.r = 0, .g = 255, .b = 0, .a = 255};
 SDL_Color COLOR_BLUE = {.r = 0, .g = 0, .b = 255, .a = 255};
+SDL_Color COLOR_RED_DARK = {.r = 100, .g = 0, .b = 0, .a = 255};
+SDL_Color COLOR_GREEN_DARK = {.r = 0, .g = 100, .b = 0, .a = 255};
+SDL_Color COLOR_BLUE_DARK = {.r = 0, .g = 0, .b = 100, .a = 255};
+SDL_Color COLOR_GRAY_DARK = {.r = 128, .g = 128, .b = 128, .a = 255};
+SDL_Color COLOR_GRAY_LIGHT = {.r = 200, .g = 200, .b = 200, .a = 255};
+SDL_Color COLOR_OCHRE = {.r = 200, .g = 100, .b = 0, .a = 255};
+SDL_Color COLOR_PURPLE = {.r = 200, .g = 0, .b = 200, .a = 255};
+
+SDL_Surface *create_field(const char *text, SDL_Color color,
+                          SDL_Color text_color) {
+  SDL_Surface *s = SDL_CreateRGBSurface(0, FIELD_WIDTH, FIELD_HEIGHT, 32, 0, 0, 0,
+                                        0);
+  SDL_FillRect(s, NULL, SDL_MapRGB(s->format, color.r, color.g, color.b));
+  if (text != NULL) {
+    SDL_Rect offset;
+    offset.x = 20;
+    offset.y = -10;
+    SDL_BlitSurface(TTF_RenderText_Solid(font_field, text, text_color), NULL, s,
+                    &offset);
+  }
+  return s;
+}
 
 void initialize_view(void) {
   int window_width = get_field_size_x() * FIELD_WIDTH;
@@ -33,24 +57,24 @@ void initialize_view(void) {
     exit(EXIT_FAILURE);
   }
 
-  font40pt = TTF_OpenFont(BITMAP_PATH "FreeSansBold.ttf", 40);
-  if (font40pt == NULL) {
+  font_field = TTF_OpenFont(BITMAP_PATH "FreeSansBold.ttf", 50);
+  if (font_field == NULL) {
     printf("TTF creation error: %s\n", TTF_GetError());
   }
 
-  symbols[EMPTY] = SDL_LoadBMP(BITMAP_PATH "empty.bmp");
-  symbols[ONE] = TTF_RenderText_Solid(font40pt, "1", COLOR_BLUE);
-  symbols[TWO] = SDL_LoadBMP(BITMAP_PATH "2.bmp");
-  symbols[THREE] = SDL_LoadBMP(BITMAP_PATH "3.bmp");
-  symbols[FOUR] = SDL_LoadBMP(BITMAP_PATH "4.bmp");
-  symbols[FIVE] = SDL_LoadBMP(BITMAP_PATH "5.bmp");
-  symbols[SIX] = SDL_LoadBMP(BITMAP_PATH "6.bmp");
-  symbols[SEVEN] = SDL_LoadBMP(BITMAP_PATH "7.bmp");
-  symbols[EIGHT] = SDL_LoadBMP(BITMAP_PATH "8.bmp");
+  symbols[EMPTY] = create_field(NULL, COLOR_GRAY_LIGHT, COLOR_GRAY_LIGHT);
+  symbols[ONE] = create_field("1", COLOR_GRAY_LIGHT, COLOR_BLUE);
+  symbols[TWO] = create_field("2", COLOR_GRAY_LIGHT, COLOR_GREEN);
+  symbols[THREE] = create_field("3", COLOR_GRAY_LIGHT, COLOR_RED);
+  symbols[FOUR] = create_field("4", COLOR_GRAY_LIGHT, COLOR_BLUE_DARK);
+  symbols[FIVE] = create_field("5", COLOR_GRAY_LIGHT, COLOR_RED_DARK);
+  symbols[SIX] = create_field("6", COLOR_GRAY_LIGHT, COLOR_GREEN_DARK);
+  symbols[SEVEN] = create_field("7", COLOR_GRAY_LIGHT, COLOR_OCHRE);
+  symbols[EIGHT] = create_field("8", COLOR_GRAY_LIGHT, COLOR_PURPLE);
   symbols[MINE] = SDL_LoadBMP(BITMAP_PATH "mine.bmp");
   symbols[EXPLODE] = SDL_LoadBMP(BITMAP_PATH "explode.bmp");
   symbols[FLAG] = SDL_LoadBMP(BITMAP_PATH "flag.bmp");
-  symbols[HIDDEN] = SDL_LoadBMP(BITMAP_PATH "hidden.bmp");
+  symbols[HIDDEN] = create_field(NULL, COLOR_GRAY_DARK, COLOR_GRAY_DARK);
 
   for (int i = 0; i <= HIDDEN; i++) {
     if (symbols[i] == NULL) {
@@ -62,26 +86,26 @@ void initialize_view(void) {
 
 void update_view(void) {
   SDL_Rect offset;
-  SDL_Surface *symbol;
-  SDL_Surface *screen;
+  SDL_Surface *screen = SDL_GetWindowSurface(window);
 
-  screen = SDL_GetWindowSurface(window);
-
+  // Blit symbols
   for (int x = 0; x < get_field_size_x(); x++) {
     for (int y = 0; y < get_field_size_y(); y++) {
       // by default print the field
-      symbol = symbols[field_static[x][y]];
+      SDL_Surface *symbol = symbols[field_static[x][y]];
 
       // modify default by dynamic field status
       if (field_dynamic[x][y] != SELECTED) {
         symbol = symbols[field_dynamic[x][y]];
       }
-      // apply bitmap
+
       offset.x = FIELD_WIDTH * x;
       offset.y = FIELD_HEIGHT * y;
       SDL_BlitSurface(symbol, NULL, screen, &offset);
     }
   }
+
+  //TODO: Draw grid
   SDL_UpdateWindowSurface(window);
 }
 
@@ -93,7 +117,7 @@ void free_view(void) {
   }
 
   SDL_DestroyWindow(window);
-  TTF_CloseFont(font40pt);
+  TTF_CloseFont(font_field);
   TTF_Quit();
   SDL_Quit();
 }

@@ -17,6 +17,18 @@ extern SDL_Surface **symbols;
 extern SDL_Window *window;
 
 /**
+ * Creates a rectangular field of size FIELD_WIDTH times FIELD_HEIGHT, filled
+ * with "color" and optional a text in "text_color".
+ *
+ * @param text String to write in the field.  If text == NULL, only a blank
+ *             field with "color" is created.
+ * @param color Background color of the field.
+ * @param text_color Font color of the optional text.
+ */
+SDL_Surface *create_field(const char *text, SDL_Color color,
+                          SDL_Color text_color);
+
+/**
  * Allocates memory for all data structures and ressources, used by the VIEW
  * and initializes them with appropriate values.
  */
