@@ -1,14 +1,24 @@
 #include "view.h"
 
+// Project global VIEW variables
 SDL_Window *window = NULL;
 SDL_Surface **symbols = NULL;
 
+// Not visible outside this unit
+TTF_Font *font40pt = NULL;
+
+SDL_Color COLOR_BLUE = {.r = 0, .g = 0, .b = 255, .a = 255};
 
 void initialize_view(void) {
   int window_width = get_field_size_x() * FIELD_WIDTH;
   int window_height = get_field_size_y() * FIELD_HEIGHT;
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     printf("SDL initialization error: %s\n", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
+  if (TTF_Init() < 0) {
+    printf("TTF initialization error:: %s\n", TTF_GetError());
+    exit(EXIT_FAILURE);
   }
   window = SDL_CreateWindow("Minesweeper", SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED, window_width,
@@ -23,8 +33,13 @@ void initialize_view(void) {
     exit(EXIT_FAILURE);
   }
 
+  font40pt = TTF_OpenFont(BITMAP_PATH "FreeSansBold.ttf", 40);
+  if (font40pt == NULL) {
+    printf("TTF creation error: %s\n", TTF_GetError());
+  }
+
   symbols[EMPTY] = SDL_LoadBMP(BITMAP_PATH "empty.bmp");
-  symbols[ONE] = SDL_LoadBMP(BITMAP_PATH "1.bmp");
+  symbols[ONE] = TTF_RenderText_Solid(font40pt, "1", COLOR_BLUE);
   symbols[TWO] = SDL_LoadBMP(BITMAP_PATH "2.bmp");
   symbols[THREE] = SDL_LoadBMP(BITMAP_PATH "3.bmp");
   symbols[FOUR] = SDL_LoadBMP(BITMAP_PATH "4.bmp");
@@ -78,6 +93,8 @@ void free_view(void) {
   }
 
   SDL_DestroyWindow(window);
+  TTF_CloseFont(font40pt);
+  TTF_Quit();
   SDL_Quit();
 }
 

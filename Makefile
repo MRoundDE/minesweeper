@@ -3,7 +3,7 @@ CC ?= gcc
 TARGET = minesweeper
 
 CFLAGS = -std=c99 -pedantic -Wall -Wextra
-LDFLAGS = -lSDL2
+LDFLAGS = -lSDL2 -lSDL2_ttf
 
 # See http://astyle.sourceforge.net/astyle.html
 ASTYLE_FLAGS = --style=google \

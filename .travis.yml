@@ -9,5 +9,6 @@ addons:
   apt:
     packages:
       - libsdl2-dev
+      - libsdl-ttf2.0-dev
 script:
   - make
