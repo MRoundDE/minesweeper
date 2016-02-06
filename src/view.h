@@ -10,12 +10,6 @@
 #define FIELD_WIDTH 64  // pixel
 #define FIELD_HEIGHT 64 // pixel
 
-#define BITMAP_PATH "assets/"
-
-// Project global VIEW variables
-extern SDL_Surface **symbols;
-extern SDL_Window *window;
-
 /**
  * Creates a rectangular field of size FIELD_WIDTH times FIELD_HEIGHT, filled
  * with "color" and optional a text in "text_color".

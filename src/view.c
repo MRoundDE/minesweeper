@@ -1,10 +1,10 @@
 #include "view.h"
 
-// Project global VIEW variables
-SDL_Window *window = NULL;
-SDL_Surface **symbols = NULL;
+#define BITMAP_PATH "assets/"
 
 // Not visible outside this unit
+SDL_Window *window = NULL;
+SDL_Surface **symbols = NULL;
 TTF_Font *font_field = NULL;
 
 SDL_Color COLOR_RED = {.r = 255, .g = 0, .b = 0, .a = 255};
@@ -49,6 +49,7 @@ void initialize_view(void) {
                             window_height, 0);
   if (window == NULL) {
     printf("SDL window creation error: %s\n", SDL_GetError());
+    exit(EXIT_FAILURE);
   }
 
   symbols = (SDL_Surface **) malloc(13 * sizeof(SDL_Surface *));
@@ -105,17 +106,29 @@ void update_view(void) {
     }
   }
 
-  //TODO: Draw grid
+  // Draw grid
+  Uint32 *screen_pixels = screen->pixels;
+  int screen_width = get_field_size_x() * FIELD_WIDTH;
+  int screen_height = get_field_size_y() * FIELD_HEIGHT;
+  for (int x = FIELD_WIDTH; x < screen_width; x = x + FIELD_WIDTH) {
+    for (int y = 0; y < screen_height; y++) {
+      screen_pixels[y * screen_width + x] = SDL_MapRGB(screen->format, 0, 0, 0);
+    }
+  }
+  for (int y = FIELD_HEIGHT; y < screen_height; y = y + FIELD_HEIGHT) {
+    for (int x = 0; x < screen_width; x++) {
+      screen_pixels[y * screen_width + x] = SDL_MapRGB(screen->format, 0, 0, 0);
+    }
+  }
+
   SDL_UpdateWindowSurface(window);
 }
 
 
 void free_view(void) {
-  // free allocated memory
   for (int i = 0; i <= HIDDEN; i++) {
     SDL_FreeSurface(symbols[i]);
   }
-
   SDL_DestroyWindow(window);
   TTF_CloseFont(font_field);
   TTF_Quit();
