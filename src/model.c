@@ -8,11 +8,13 @@ state_t **field_dynamic = NULL;
 // Not visible outside this unit
 int FIELD_SIZE_X = 0;
 int FIELD_SIZE_Y = 0;
+int NUMBER_OF_MINES = 0;
 
 
 void initialize_model(int number_of_mines, int field_size_x, int field_size_y) {
   FIELD_SIZE_X = field_size_x;
   FIELD_SIZE_Y = field_size_y;
+  NUMBER_OF_MINES = number_of_mines;
 
   // Allocate memory
   field_static = (state_t **) malloc(FIELD_SIZE_X * sizeof(state_t *));
@@ -31,16 +33,26 @@ void initialize_model(int number_of_mines, int field_size_x, int field_size_y) {
       field_dynamic[x][y] = HIDDEN;
     }
   }
+}
+
+
+void set_mines(int start_x, int start_y) {
+  static int done = 0;
+  if (done) {
+    return;
+  }
+  done = 1;
 
   // Initialize pseudo number generator
   srand(time(NULL));
 
   // place mines and numbers
   int i = 0;
-  while (i < number_of_mines) {
+  while (i < NUMBER_OF_MINES) {
     int x = rand() % FIELD_SIZE_X;
     int y = rand() % FIELD_SIZE_Y;
-    if (field_static[x][y] != MINE) {
+    // Avoid first click mine
+    if (!((start_x == x) && (start_y == y)) && (field_static[x][y] != MINE)) {
       field_static[x][y] = MINE;
 
       // add numbers to neighbours

@@ -17,6 +17,7 @@ void control_game(void) {
         int x = 0;
         int y = 0;
         get_field_coordinates(e, &x, &y);
+        set_mines(x, y);
 
         // update model by given task
         if (e.button.button == SDL_BUTTON_LEFT) {
