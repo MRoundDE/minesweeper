@@ -19,7 +19,7 @@
  * @param color Background color of the field.
  * @param text_color Font color of the optional text.
  */
-SDL_Surface *create_field(const char *text, SDL_Color color,
+SDL_Texture *create_field(const char *text, SDL_Color color,
                           SDL_Color text_color);
 
 /**

@@ -4,7 +4,8 @@
 
 // Not visible outside this unit
 SDL_Window *window = NULL;
-SDL_Surface **symbols = NULL;
+SDL_Renderer *renderer = NULL;
+SDL_Texture **symbols = NULL;
 TTF_Font *font_field = NULL;
 
 SDL_Color COLOR_RED = {.r = 255, .g = 0, .b = 0, .a = 255};
@@ -18,20 +19,22 @@ SDL_Color COLOR_GRAY_LIGHT = {.r = 200, .g = 200, .b = 200, .a = 255};
 SDL_Color COLOR_OCHRE = {.r = 200, .g = 100, .b = 0, .a = 255};
 SDL_Color COLOR_PURPLE = {.r = 200, .g = 0, .b = 200, .a = 255};
 
-SDL_Surface *create_field(const char *text, SDL_Color color,
+
+SDL_Texture *create_field(const char *text, SDL_Color color,
                           SDL_Color text_color) {
   SDL_Surface *s = SDL_CreateRGBSurface(0, FIELD_WIDTH, FIELD_HEIGHT, 32, 0, 0, 0,
                                         0);
   SDL_FillRect(s, NULL, SDL_MapRGB(s->format, color.r, color.g, color.b));
   if (text != NULL) {
-    SDL_Rect offset;
-    offset.x = 20;
-    offset.y = -10;
+    SDL_Rect offset = {.x = 20, .y = -10};
     SDL_BlitSurface(TTF_RenderText_Solid(font_field, text, text_color), NULL, s,
                     &offset);
   }
-  return s;
+  SDL_Texture *t = SDL_CreateTextureFromSurface(renderer, s);
+  SDL_FreeSurface(s);
+  return t;
 }
+
 
 void initialize_view(void) {
   int window_width = get_field_size_x() * FIELD_WIDTH;
@@ -51,8 +54,13 @@ void initialize_view(void) {
     printf("SDL window creation error: %s\n", SDL_GetError());
     exit(EXIT_FAILURE);
   }
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  if (window == NULL) {
+    printf("SDL renderer creation error: %s\n", SDL_GetError());
+    exit(EXIT_FAILURE);
+  }
 
-  symbols = (SDL_Surface **) malloc(13 * sizeof(SDL_Surface *));
+  symbols = (SDL_Texture **) malloc(13 * sizeof(SDL_Texture *));
   if (window == NULL) {
     printf("SDL memory allocation error.\n");
     exit(EXIT_FAILURE);
@@ -72,9 +80,12 @@ void initialize_view(void) {
   symbols[SIX] = create_field("6", COLOR_GRAY_LIGHT, COLOR_GREEN_DARK);
   symbols[SEVEN] = create_field("7", COLOR_GRAY_LIGHT, COLOR_OCHRE);
   symbols[EIGHT] = create_field("8", COLOR_GRAY_LIGHT, COLOR_PURPLE);
-  symbols[MINE] = SDL_LoadBMP(BITMAP_PATH "mine.bmp");
-  symbols[EXPLODE] = SDL_LoadBMP(BITMAP_PATH "explode.bmp");
-  symbols[FLAG] = SDL_LoadBMP(BITMAP_PATH "flag.bmp");
+  symbols[MINE] = SDL_CreateTextureFromSurface(renderer,
+                  SDL_LoadBMP(BITMAP_PATH "mine.bmp"));
+  symbols[EXPLODE] = SDL_CreateTextureFromSurface(renderer,
+                     SDL_LoadBMP(BITMAP_PATH "explode.bmp"));
+  symbols[FLAG] = SDL_CreateTextureFromSurface(renderer,
+                  SDL_LoadBMP(BITMAP_PATH "flag.bmp"));
   symbols[HIDDEN] = create_field(NULL, COLOR_GRAY_DARK, COLOR_GRAY_DARK);
 
   for (int i = 0; i <= HIDDEN; i++) {
@@ -86,14 +97,13 @@ void initialize_view(void) {
 
 
 void update_view(void) {
-  SDL_Rect offset;
-  SDL_Surface *screen = SDL_GetWindowSurface(window);
+  SDL_Rect offset = {.w = FIELD_WIDTH, .h = FIELD_HEIGHT};
 
-  // Blit symbols
+  // Render symbols
   for (int x = 0; x < get_field_size_x(); x++) {
     for (int y = 0; y < get_field_size_y(); y++) {
       // by default print the field
-      SDL_Surface *symbol = symbols[field_static[x][y]];
+      SDL_Texture *symbol = symbols[field_static[x][y]];
 
       // modify default by dynamic field status
       if (field_dynamic[x][y] != SELECTED) {
@@ -102,33 +112,29 @@ void update_view(void) {
 
       offset.x = FIELD_WIDTH * x;
       offset.y = FIELD_HEIGHT * y;
-      SDL_BlitSurface(symbol, NULL, screen, &offset);
+      SDL_RenderCopy(renderer, symbol, NULL, &offset);
     }
   }
 
   // Draw grid
-  Uint32 *screen_pixels = screen->pixels;
   int screen_width = get_field_size_x() * FIELD_WIDTH;
   int screen_height = get_field_size_y() * FIELD_HEIGHT;
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   for (int x = FIELD_WIDTH; x < screen_width; x = x + FIELD_WIDTH) {
-    for (int y = 0; y < screen_height; y++) {
-      screen_pixels[y * screen_width + x] = SDL_MapRGB(screen->format, 0, 0, 0);
-    }
+    SDL_RenderDrawLine(renderer, x, 0, x, screen_height);
   }
   for (int y = FIELD_HEIGHT; y < screen_height; y = y + FIELD_HEIGHT) {
-    for (int x = 0; x < screen_width; x++) {
-      screen_pixels[y * screen_width + x] = SDL_MapRGB(screen->format, 0, 0, 0);
-    }
+    SDL_RenderDrawLine(renderer, 0, y, screen_width, y);
   }
-
-  SDL_UpdateWindowSurface(window);
+  SDL_RenderPresent(renderer);
 }
 
 
 void free_view(void) {
   for (int i = 0; i <= HIDDEN; i++) {
-    SDL_FreeSurface(symbols[i]);
+    SDL_DestroyTexture(symbols[i]);
   }
+  SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   TTF_CloseFont(font_field);
   TTF_Quit();
