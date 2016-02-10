@@ -38,18 +38,18 @@ void field_select(int x, int y);
 void field_flag(int x, int y);
 
 /**
- * Marks a field as "exploded" and uncovers all remaining mines.  Prints out a
- * loose message.
- *
- * @param x The fields x-Coordinate
- * @param y The fields y-Coordinate
+ * Uncovers all mines on the field.
  */
-void field_explode(int x, int y);
+void show_mines();
 
 /**
- * Checks necessary conditions to win.  Generates statistics about mines and
- * prints them out in case of a won game.
+ * Generates statistics about mines.
+ *
+ * @param mines_flagged_correct Number of correct flagged mines
+ * @param mines_flagged_wrong Number of wrong flagged mines
+ * @param mines_unflagged Number of unflagged mines
  */
-int check_win(void);
+void get_mine_statistic(int *mines_flagged_correct, int *mines_flagged_wrong,
+                        int *mines_unflagged);
 
 #endif

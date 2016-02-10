@@ -154,3 +154,17 @@ void get_field_coordinates(SDL_Event e, int *x, int *y) {
   }
   *y = *y - 1;
 }
+
+
+void print_text(const char *text) {
+  int screen_width = get_field_size_x() * FIELD_WIDTH;
+  int screen_height = get_field_size_y() * FIELD_HEIGHT;
+  int w = 0;
+  int h = 0;
+  TTF_SizeText(font_field, text, &w, &h);
+  SDL_Rect offset = {.x = (screen_width - w) / 2, .y = screen_height / 3, .w = w, .h = h};
+  SDL_Texture *t = SDL_CreateTextureFromSurface(renderer,
+                   TTF_RenderText_Solid(font_field, text, COLOR_RED));
+  SDL_RenderCopy(renderer, t, NULL, &offset);
+  SDL_RenderPresent(renderer);
+}

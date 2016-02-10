@@ -43,4 +43,9 @@ void free_view(void);
  */
 void get_field_coordinates(SDL_Event e, int *x, int *y);
 
+/**
+ * Print text to the center of the screen.
+ */
+void print_text(const char *text);
+
 #endif
