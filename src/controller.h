@@ -42,14 +42,4 @@ void field_flag(int x, int y);
  */
 void show_mines();
 
-/**
- * Generates statistics about mines.
- *
- * @param mines_flagged_correct Number of correct flagged mines
- * @param mines_flagged_wrong Number of wrong flagged mines
- * @param mines_unflagged Number of unflagged mines
- */
-void get_mine_statistic(int *mines_flagged_correct, int *mines_flagged_wrong,
-                        int *mines_unflagged);
-
 #endif

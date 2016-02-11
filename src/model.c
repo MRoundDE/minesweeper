@@ -118,3 +118,23 @@ int get_field_size_x(void) {
 int get_field_size_y(void) {
   return FIELD_SIZE_Y;
 }
+
+void get_mine_statistic(int *mines_flagged_correct, int *mines_flagged_wrong,
+                        int *mines_unflagged) {
+  *mines_flagged_correct = 0;
+  *mines_flagged_wrong = 0;
+  *mines_unflagged = 0;
+  for (int x = 0; x < get_field_size_x(); x++) {
+    for (int y = 0; y < get_field_size_y(); y++) {
+      if (field_static[x][y] == MINE) {
+        if (field_dynamic[x][y] == FLAG) {
+          *mines_flagged_correct = *mines_flagged_correct + 1;
+        } else {
+          *mines_unflagged = *mines_unflagged + 1;
+        }
+      } else if (field_dynamic[x][y] == FLAG) {
+        *mines_flagged_wrong = *mines_flagged_wrong + 1;
+      }
+    }
+  }
+}

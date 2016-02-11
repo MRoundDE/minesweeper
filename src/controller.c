@@ -42,11 +42,11 @@ void control_game(void) {
 
         get_mine_statistic(&mines_flagged_correct, &mines_flagged_wrong,
                            &mines_unflagged);
+        printf("\n\nMines flagged correct: %d\n", mines_flagged_correct);
+        printf("\nMines flagged wrong: %d\n", mines_flagged_wrong);
+        printf("\nUnflagged mines: %d\n\n\n", mines_unflagged);
         if ((mines_unflagged == 0) && (mines_flagged_wrong == 0)) {
           print_text("YOU WON!!!");
-          printf("\n\nMines flagged correct: %d\n", mines_flagged_correct);
-          printf("\nMines flagged wrong: %d\n", mines_flagged_wrong);
-          printf("\nUnflagged mines: %d\n\n\n", mines_unflagged);
           quit = 1;
         } else if (quit == 1) {
           print_text("YOU LOST!!!");
@@ -112,24 +112,6 @@ void show_mines() {
       if ((field_static[x][y] == MINE) && (field_dynamic[x][y] != FLAG)
           && (field_dynamic[x][y] != EXPLODE)) {
         field_dynamic[x][y] = SELECTED;
-      }
-    }
-  }
-}
-
-
-void get_mine_statistic(int *mines_flagged_correct, int *mines_flagged_wrong,
-                        int *mines_unflagged) {
-  for (int x = 0; x < get_field_size_x(); x++) {
-    for (int y = 0; y < get_field_size_y(); y++) {
-      if (field_static[x][y] == MINE) {
-        if (field_dynamic[x][y] == FLAG) {
-          *mines_flagged_correct = *mines_flagged_correct + 1;
-        } else {
-          *mines_unflagged = *mines_unflagged + 1;
-        }
-      } else if (field_dynamic[x][y] == FLAG) {
-        *mines_flagged_wrong = *mines_flagged_wrong + 1;
       }
     }
   }
