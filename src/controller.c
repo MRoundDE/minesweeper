@@ -5,10 +5,6 @@ void control_game(void) {
   SDL_Event e;
   int quit = 0;
 
-  int mines_flagged_correct = 0;
-  int mines_flagged_wrong = 0;
-  int mines_unflagged = 0;
-
   // initial field drawing
   update_view();
 
@@ -28,7 +24,7 @@ void control_game(void) {
         if (e.button.button == SDL_BUTTON_LEFT) {
           if (field_static[x][y] == MINE) {
             field_dynamic[x][y] = EXPLODE;
-            show_mines();
+            reveal_everything();
             quit = 1;
           } else {
             field_select(x, y);
@@ -40,16 +36,14 @@ void control_game(void) {
         // model is now up to date
         update_view();
 
-        get_mine_statistic(&mines_flagged_correct, &mines_flagged_wrong,
-                           &mines_unflagged);
-        printf("\n\nMines flagged correct: %d\n", mines_flagged_correct);
-        printf("\nMines flagged wrong: %d\n", mines_flagged_wrong);
-        printf("\nUnflagged mines: %d\n\n\n", mines_unflagged);
-        if ((mines_unflagged == 0) && (mines_flagged_wrong == 0)) {
-          print_text("YOU WON!!!");
+        int mines_flagged_wrong = 0;
+        int mines_unflagged = 0;
+        get_mine_statistic(&mines_flagged_wrong, &mines_unflagged);
+        if ((mines_flagged_wrong == 0) && (mines_unflagged == 0)) {
+          print_top_bar_text("YOU WON!!!");
           quit = 1;
         } else if (quit == 1) {
-          print_text("YOU LOST!!!");
+          print_top_bar_text("YOU LOST!!!");
         }
       }
     }
@@ -64,7 +58,12 @@ void control_game(void) {
   }
 }
 
-
+/**
+ * Internal helper function for field_select.
+ *
+ * @param x The fields x-Coordinate
+ * @param y The fields y-Coordinate
+ */
 void recursive_select(int x, int y) {
   field_dynamic[x][y] = SELECTED;
 
@@ -106,12 +105,14 @@ void field_flag(int x, int y) {
 }
 
 
-void show_mines() {
+void reveal_everything() {
   for (int x = 0; x < get_field_size_x(); x++) {
     for (int y = 0; y < get_field_size_y(); y++) {
       if ((field_static[x][y] == MINE) && (field_dynamic[x][y] != FLAG)
           && (field_dynamic[x][y] != EXPLODE)) {
         field_dynamic[x][y] = SELECTED;
+      } else if ((field_static[x][y] != MINE) && (field_dynamic[x][y] == FLAG)) {
+        field_dynamic[x][y] = FLAG_WRONG;
       }
     }
   }

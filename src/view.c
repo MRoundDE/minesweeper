@@ -38,7 +38,7 @@ SDL_Texture *create_field(const char *text, SDL_Color color,
 
 void initialize_view(void) {
   int window_width = get_field_size_x() * FIELD_WIDTH;
-  int window_height = get_field_size_y() * FIELD_HEIGHT;
+  int window_height = get_field_size_y() * FIELD_HEIGHT + TOP_BAR_HEIGHT;
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     printf("SDL initialization error: %s\n", SDL_GetError());
     exit(EXIT_FAILURE);
@@ -60,7 +60,8 @@ void initialize_view(void) {
     exit(EXIT_FAILURE);
   }
 
-  symbols = (SDL_Texture **) malloc(13 * sizeof(SDL_Texture *));
+  // There are "(HIDDEN + 1)" visible symbols
+  symbols = (SDL_Texture **) malloc((HIDDEN + 1) * sizeof(SDL_Texture *));
   if (window == NULL) {
     printf("SDL memory allocation error.\n");
     exit(EXIT_FAILURE);
@@ -97,9 +98,18 @@ void initialize_view(void) {
 
 
 void update_view(void) {
-  SDL_Rect offset = {.w = FIELD_WIDTH, .h = FIELD_HEIGHT};
+  // Top bar
+  SDL_Rect top_bar = {
+    .x = 0,
+    .y = 0,
+    .w = get_field_size_x() * FIELD_WIDTH,
+    .h = TOP_BAR_HEIGHT
+  };
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+  SDL_RenderFillRect(renderer, &top_bar);
 
   // Render symbols
+  SDL_Rect offset = {.w = FIELD_WIDTH, .h = FIELD_HEIGHT};
   for (int x = 0; x < get_field_size_x(); x++) {
     for (int y = 0; y < get_field_size_y(); y++) {
       // by default print the field
@@ -107,12 +117,28 @@ void update_view(void) {
 
       // modify default by dynamic field status
       if (field_dynamic[x][y] != SELECTED) {
-        symbol = symbols[field_dynamic[x][y]];
+        if (field_dynamic[x][y] == FLAG_WRONG) {
+          symbol = symbols[FLAG];
+        } else {
+          symbol = symbols[field_dynamic[x][y]];
+        }
       }
 
       offset.x = FIELD_WIDTH * x;
-      offset.y = FIELD_HEIGHT * y;
+      offset.y = FIELD_HEIGHT * y + TOP_BAR_HEIGHT;
       SDL_RenderCopy(renderer, symbol, NULL, &offset);
+
+      // Cross out wrong flags
+      if (field_dynamic[x][y] == FLAG_WRONG) {
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);  // red
+        for (int i = 0; i < BOLD_LINE_THICKNESS; i++) {
+          SDL_RenderDrawLine(renderer, offset.x, offset.y + i,
+                             offset.x + FIELD_WIDTH - i,
+                             offset.y + FIELD_HEIGHT);
+          SDL_RenderDrawLine(renderer, offset.x + i, offset.y + FIELD_HEIGHT,
+                             offset.x + FIELD_WIDTH, offset.y + i);
+        }
+      }
     }
   }
 
@@ -121,9 +147,11 @@ void update_view(void) {
   int screen_height = get_field_size_y() * FIELD_HEIGHT;
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   for (int x = FIELD_WIDTH; x < screen_width; x = x + FIELD_WIDTH) {
-    SDL_RenderDrawLine(renderer, x, 0, x, screen_height);
+    SDL_RenderDrawLine(renderer, x, TOP_BAR_HEIGHT, x,
+                       screen_height + TOP_BAR_HEIGHT);
   }
-  for (int y = FIELD_HEIGHT; y < screen_height; y = y + FIELD_HEIGHT) {
+  for (int y = FIELD_HEIGHT + TOP_BAR_HEIGHT;
+       y < screen_height + TOP_BAR_HEIGHT; y = y + FIELD_HEIGHT) {
     SDL_RenderDrawLine(renderer, 0, y, screen_width, y);
   }
   SDL_RenderPresent(renderer);
@@ -149,19 +177,19 @@ void get_field_coordinates(SDL_Event e, int *x, int *y) {
     *x = *x + 1;
   }
   *x = *x - 1;
-  while ((*y < get_field_size_y()) && ((FIELD_HEIGHT * (*y)) < e.button.y)) {
+  while ((*y < get_field_size_y())
+         && ((FIELD_HEIGHT * (*y) + TOP_BAR_HEIGHT) < e.button.y)) {
     *y = *y + 1;
   }
   *y = *y - 1;
 }
 
 
-void print_text(const char *text) {
-  int screen_width = get_field_size_x() * FIELD_WIDTH;
-  int screen_height = get_field_size_y() * FIELD_HEIGHT;
-  SDL_Rect offset = {.y = screen_height / 3};
+void print_top_bar_text(const char *text) {
+  SDL_Rect offset;
   TTF_SizeText(font_field, text, &offset.w, &offset.h);
-  offset.x = (screen_width - offset.w) / 2;
+  offset.x = (get_field_size_x() * FIELD_WIDTH - offset.w) / 2;
+  offset.y = (TOP_BAR_HEIGHT - offset.h) / 2;
   SDL_Texture *t = SDL_CreateTextureFromSurface(renderer,
                    TTF_RenderText_Solid(font_field, text, COLOR_RED));
   SDL_RenderCopy(renderer, t, NULL, &offset);

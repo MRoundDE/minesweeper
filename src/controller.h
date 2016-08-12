@@ -11,14 +11,6 @@
  */
 void control_game(void);
 
-/**
- * Helper function for field_select.  Should not be accessed without proper
- * checking.
- *
- * @param x The fields x-Coordinate
- * @param y The fields y-Coordinate
- */
-void recursive_select(int x, int y);
 
 /**
  * Marks a field as "selected".  If the field is empty, all sourrounding fields
@@ -40,6 +32,6 @@ void field_flag(int x, int y);
 /**
  * Uncovers all mines on the field.
  */
-void show_mines();
+void reveal_everything();
 
 #endif

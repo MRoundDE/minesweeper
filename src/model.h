@@ -13,7 +13,7 @@ typedef enum {
   // static states
   EMPTY = 0, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, MINE,
   // dynamic states
-  EXPLODE, FLAG, HIDDEN, SELECTED, NUMBER_OF_FIELD_STATES
+  EXPLODE, FLAG, HIDDEN, SELECTED, FLAG_WRONG, NUMBER_OF_FIELD_STATES
 } state_t;
 
 // Project global fields
@@ -60,11 +60,9 @@ int get_field_size_y(void);
 /**
  * Generates statistics about mines.
  *
- * @param mines_flagged_correct Number of correct flagged mines
  * @param mines_flagged_wrong Number of wrong flagged mines
  * @param mines_unflagged Number of unflagged mines
  */
-void get_mine_statistic(int *mines_flagged_correct, int *mines_flagged_wrong,
-                        int *mines_unflagged);
+void get_mine_statistic(int *mines_flagged_wrong, int *mines_unflagged);
 
 #endif

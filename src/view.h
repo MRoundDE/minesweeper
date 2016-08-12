@@ -9,6 +9,8 @@
 // constants for the presentation
 #define FIELD_WIDTH 64  // pixel
 #define FIELD_HEIGHT 64 // pixel
+#define TOP_BAR_HEIGHT 50 // pixel
+#define BOLD_LINE_THICKNESS 3 // pixel
 
 /**
  * Creates a rectangular field of size FIELD_WIDTH times FIELD_HEIGHT, filled
@@ -44,8 +46,8 @@ void free_view(void);
 void get_field_coordinates(SDL_Event e, int *x, int *y);
 
 /**
- * Print text to the center of the screen.
+ * Print text to the top bar.
  */
-void print_text(const char *text);
+void print_top_bar_text(const char *text);
 
 #endif
