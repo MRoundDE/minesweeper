@@ -1,6 +1,6 @@
 # Minesweeper
 
-[![Linux Build Status](https://travis-ci.org/siko1056/minesweeper.svg?branch=master)](https://travis-ci.org/siko1056/minesweeper)
+[![Build Status](https://travis-ci.org/MRoundDE/minesweeper.svg?branch=master)](https://travis-ci.org/MRoundDE/minesweeper)
 
 Yet another
 [Minesweeper](https://en.wikipedia.org/wiki/Minesweeper_(video_game))
