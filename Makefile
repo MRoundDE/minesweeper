@@ -1,9 +1,48 @@
 CC ?= gcc
 
 TARGET = minesweeper
+VERSION = 0.2.0-alpha
 
-CFLAGS = -std=c99 -pedantic -Wall -Wextra
-LDFLAGS = -lSDL2 -lSDL2_ttf
+ZIP_NAME = $(TARGET)-$(VERSION).zip
+
+# i686-w64-mingw32
+MINGW_ARCH ?= x86_64-w64-mingw32
+SDL2_PATH_WIN ?= .
+SDL2_TTF_PATH_WIN ?= .
+
+# specify root directory (default: current directory)
+ROOT_DIR ?= ${PWD}
+TEMP_DIR := $(shell mktemp -d)
+
+# Specify include, library, and dll paths relative to SDL2 archive.
+SDL2_INC_WIN = -I$(SDL2_PATH_WIN)/$(MINGW_ARCH)/include \
+               -I$(SDL2_PATH_WIN)/$(MINGW_ARCH)/include/SDL2
+SDL2_LIB_WIN = -L$(SDL2_PATH_WIN)/$(MINGW_ARCH)/lib
+SDL2_BIN_WIN = $(wildcard $(SDL2_PATH_WIN)/$(MINGW_ARCH)/bin/*.dll)
+
+# Specify include, library, and dll paths relative to SDL2_TTF archive.
+SDL2_TTF_INC_WIN = -I$(SDL2_TTF_PATH_WIN)/$(MINGW_ARCH)/include
+SDL2_TTF_LIB_WIN = -L$(SDL2_TTF_PATH_WIN)/$(MINGW_ARCH)/lib
+SDL2_TTF_BIN_WIN = $(wildcard $(SDL2_TTF_PATH_WIN)/$(MINGW_ARCH)/bin/*)
+
+ifneq (,$(findstring mingw,$(CC)))
+  PROG_NAME = $(TARGET).exe
+else
+  PROG_NAME = $(TARGET)
+endif
+
+ifneq (,$(findstring mingw,$(CC)))
+  CFLAGS = -std=c99 -pedantic -Wall -Wextra $(SDL2_INC_WIN) $(SDL2_TTF_INC_WIN)
+else
+  CFLAGS = -std=c99 -pedantic -Wall -Wextra
+endif
+
+ifneq (,$(findstring mingw,$(CC)))
+  LDFLAGS = $(SDL2_LIB_WIN) $(SDL2_TTF_LIB_WIN) \
+            -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -mwindows
+else
+  LDFLAGS = -lSDL2 -lSDL2_ttf
+endif
 
 # See http://astyle.sourceforge.net/astyle.html
 ASTYLE_FLAGS = --style=google \
@@ -19,11 +58,19 @@ OBJS = $(SRCS:.c=.o)
 %.o:%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-all: $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
+all: $(PROG_NAME)
+
+$(PROG_NAME): $(OBJS)
+	$(CC) $(CFLAGS) -o $(PROG_NAME) $(OBJS) $(LDFLAGS)
 
 clean:
-	rm -f $(TARGET) src/*.o src/*.orig src/*.gch
+	$(RM) $(PROG_NAME) $(ZIP_NAME) src/*.o src/*.orig src/*.gch
+
+dist-win: $(PROG_NAME)
+	cp -t $(TEMP_DIR) $(PROG_NAME)
+	cp -R assets $(TEMP_DIR)
+	cp -t $(TEMP_DIR)/assets $(SDL2_BIN_WIN) $(SDL2_TTF_BIN_WIN)
+	cd $(TEMP_DIR) && zip -r $(ROOT_DIR)/$(ZIP_NAME) *
 
 format-source-code:
 	astyle $(ASTYLE_FLAGS) $(SRCS) $(HEADS)

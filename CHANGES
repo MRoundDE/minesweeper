@@ -1,3 +1,10 @@
+Release 0.2.0 (development)
+===========================
+
+* Cross build for Windows executables using mingw.
+* Replace many *.bmp-files by SDL2_ttf code.
+
+
 Release 0.1 (Feb 03, 2016)
 ==========================
 
