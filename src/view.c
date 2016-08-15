@@ -6,6 +6,7 @@
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Texture **symbols = NULL;
+SDL_Texture **top_bar_symbols = NULL;
 TTF_Font *font_field = NULL;
 
 SDL_Color COLOR_RED = {.r = 255, .g = 0, .b = 0, .a = 255};
@@ -89,8 +90,23 @@ void initialize_view(void) {
                   SDL_LoadBMP(BITMAP_PATH "flag.bmp"));
   symbols[HIDDEN] = create_field(NULL, COLOR_GRAY_DARK, COLOR_GRAY_DARK);
 
+  top_bar_symbols = (SDL_Texture **) malloc(NUMBER_OF_WIN_STATES * sizeof(
+                      SDL_Texture *));
+  top_bar_symbols[NORMAL] = SDL_CreateTextureFromSurface(renderer,
+                            SDL_LoadBMP(BITMAP_PATH "mround.bmp"));
+  top_bar_symbols[WIN] = SDL_CreateTextureFromSurface(renderer,
+                         SDL_LoadBMP(BITMAP_PATH "mround_appr.bmp"));
+  top_bar_symbols[LOOSE] = SDL_CreateTextureFromSurface(renderer,
+                           SDL_LoadBMP(BITMAP_PATH "explode.bmp"));
+
   for (int i = 0; i <= HIDDEN; i++) {
     if (symbols[i] == NULL) {
+      printf("Cannot load bitmap %d\n", i);
+    }
+  }
+
+  for (int i = 0; i < NUMBER_OF_WIN_STATES; i++) {
+    if (top_bar_symbols[i] == NULL) {
       printf("Cannot load bitmap %d\n", i);
     }
   }
@@ -108,8 +124,13 @@ void update_view(void) {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderFillRect(renderer, &top_bar);
 
-  // Render symbols
+  // Render top symbol
   SDL_Rect offset = {.w = FIELD_WIDTH, .h = FIELD_HEIGHT};
+  offset.x = (FIELD_WIDTH * (get_field_size_x() - 1)) / 2;
+  offset.y = (TOP_BAR_HEIGHT - FIELD_HEIGHT) / 2;
+  SDL_RenderCopy(renderer, top_bar_symbols[get_game_state()], NULL, &offset);
+
+  // Render field symbols
   for (int x = 0; x < get_field_size_x(); x++) {
     for (int y = 0; y < get_field_size_y(); y++) {
       // by default print the field
@@ -161,6 +182,9 @@ void update_view(void) {
 void free_view(void) {
   for (int i = 0; i <= HIDDEN; i++) {
     SDL_DestroyTexture(symbols[i]);
+  }
+  for (int i = 0; i < NUMBER_OF_WIN_STATES; i++) {
+    SDL_DestroyTexture(top_bar_symbols[i]);
   }
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);

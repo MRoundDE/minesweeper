@@ -10,7 +10,7 @@
 // constants for the presentation
 #define FIELD_WIDTH 64  // pixel
 #define FIELD_HEIGHT 64 // pixel
-#define TOP_BAR_HEIGHT 50 // pixel
+#define TOP_BAR_HEIGHT 80 // pixel
 #define BOLD_LINE_THICKNESS 3 // pixel
 
 /**
