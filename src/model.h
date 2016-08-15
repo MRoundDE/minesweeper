@@ -16,6 +16,10 @@ typedef enum {
   EXPLODE, FLAG, HIDDEN, SELECTED, FLAG_WRONG, NUMBER_OF_FIELD_STATES
 } state_t;
 
+typedef enum {
+  NORMAL = 0, WIN, LOOSE, NUMBER_OF_WIN_STATES
+} game_state_t;
+
 // Project global fields
 extern state_t **field_static;
 extern state_t **field_dynamic;
@@ -69,5 +73,10 @@ int get_field_size_y(void);
  * @param mines_unflagged Number of unflagged mines
  */
 void get_mine_statistic(int *mines_flagged_wrong, int *mines_unflagged);
+
+/**
+ * Returns the state of the game.
+ */
+game_state_t get_game_state ();
 
 #endif

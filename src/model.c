@@ -10,6 +10,7 @@ int FIELD_SIZE_X = 0;
 int FIELD_SIZE_Y = 0;
 int NUMBER_OF_MINES = 0;
 int reset = 0;
+game_state_t game_state = NORMAL;
 
 
 void initialize_model(int number_of_mines, int field_size_x, int field_size_y) {
@@ -33,6 +34,7 @@ void initialize_model(int number_of_mines, int field_size_x, int field_size_y) {
 
 void reset_model() {
   reset = 1;
+  game_state = NORMAL;
   for (int x = 0; x < FIELD_SIZE_X; x++) {
     for (int y = 0; y < FIELD_SIZE_Y; y++) {
       field_static[x][y] = EMPTY;
@@ -138,4 +140,15 @@ void get_mine_statistic(int *mines_flagged_wrong, int *mines_unflagged) {
       }
     }
   }
+}
+
+game_state_t get_game_state () {
+  int mines_flagged_wrong = 0;
+  int mines_unflagged = 0;
+  get_mine_statistic(&mines_flagged_wrong, &mines_unflagged);
+  if ((!reset) && (mines_flagged_wrong == 0) && (mines_unflagged == 0)) {
+    game_state = WIN;
+  }
+
+  return game_state;
 }
