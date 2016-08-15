@@ -9,6 +9,7 @@ state_t **field_dynamic = NULL;
 int FIELD_SIZE_X = 0;
 int FIELD_SIZE_Y = 0;
 int NUMBER_OF_MINES = 0;
+int reset = 0;
 
 
 void initialize_model(int number_of_mines, int field_size_x, int field_size_y) {
@@ -26,7 +27,12 @@ void initialize_model(int number_of_mines, int field_size_x, int field_size_y) {
     field_dynamic[x] = (state_t *) malloc(FIELD_SIZE_Y * sizeof(state_t));
   }
 
-  // initialize all fields empty and hidden
+  reset_model();
+}
+
+
+void reset_model() {
+  reset = 1;
   for (int x = 0; x < FIELD_SIZE_X; x++) {
     for (int y = 0; y < FIELD_SIZE_Y; y++) {
       field_static[x][y] = EMPTY;
@@ -36,12 +42,11 @@ void initialize_model(int number_of_mines, int field_size_x, int field_size_y) {
 }
 
 
-void set_mines(int start_x, int start_y) {
-  static int done = 0;
-  if (done) {
+void place_mines(int start_x, int start_y) {
+  if (!reset) {
     return;
   }
-  done = 1;
+  reset = 0;
 
   // Initialize pseudo number generator
   srand(time(NULL));

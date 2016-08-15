@@ -31,12 +31,17 @@ extern state_t **field_dynamic;
 void initialize_model(int number_of_mines, int field_size_x, int field_size_y);
 
 /**
+ * Initialize all fields empty and hidden.
+ */
+void reset_model();
+
+/**
  * Places randomly mines on the field, except for (x,y).
  *
  * @param x x-Coordinate to avoid
  * @param y y-Coordinate to avoid
  */
-void set_mines(int x, int y);
+void place_mines(int x, int y);
 
 /**
  * Deallocates all memory used by the MODEL.
