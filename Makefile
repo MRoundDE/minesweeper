@@ -18,12 +18,14 @@ TEMP_DIR := $(shell mktemp -d)
 SDL2_INC_WIN = -I$(SDL2_PATH_WIN)/$(MINGW_ARCH)/include \
                -I$(SDL2_PATH_WIN)/$(MINGW_ARCH)/include/SDL2
 SDL2_LIB_WIN = -L$(SDL2_PATH_WIN)/$(MINGW_ARCH)/lib
-SDL2_BIN_WIN = $(wildcard $(SDL2_PATH_WIN)/$(MINGW_ARCH)/bin/*.dll)
+SDL2_DLL_WIN = $(wildcard $(SDL2_PATH_WIN)/$(MINGW_ARCH)/bin/*.dll)
+SDL2_LIC_WIN = $(SDL2_PATH_WIN)/README-SDL.txt
 
 # Specify include, library, and dll paths relative to SDL2_TTF archive.
 SDL2_TTF_INC_WIN = -I$(SDL2_TTF_PATH_WIN)/$(MINGW_ARCH)/include
 SDL2_TTF_LIB_WIN = -L$(SDL2_TTF_PATH_WIN)/$(MINGW_ARCH)/lib
-SDL2_TTF_BIN_WIN = $(wildcard $(SDL2_TTF_PATH_WIN)/$(MINGW_ARCH)/bin/*)
+SDL2_TTF_DLL_WIN = $(wildcard $(SDL2_TTF_PATH_WIN)/$(MINGW_ARCH)/bin/*.dll)
+SDL2_TTF_LIC_WIN = $(wildcard $(SDL2_TTF_PATH_WIN)/$(MINGW_ARCH)/bin/*.txt)
 
 ifneq (,$(findstring mingw,$(CC)))
   PROG_NAME = $(TARGET).exe
@@ -67,9 +69,11 @@ clean:
 	$(RM) $(PROG_NAME) $(ZIP_NAME) src/*.o src/*.orig src/*.gch
 
 dist-win: $(PROG_NAME)
-	cp -t $(TEMP_DIR) $(PROG_NAME)
+	mkdir -p $(TEMP_DIR)/license
+	cp -t $(TEMP_DIR) $(PROG_NAME) README.md
 	cp -R assets $(TEMP_DIR)
-	cp -t $(TEMP_DIR)/assets $(SDL2_BIN_WIN) $(SDL2_TTF_BIN_WIN)
+	cp -t $(TEMP_DIR) $(SDL2_DLL_WIN) $(SDL2_TTF_DLL_WIN)
+	cp -t $(TEMP_DIR)/license $(SDL2_LIC_WIN) $(SDL2_TTF_LIC_WIN) LICENSE
 	cd $(TEMP_DIR) && zip -r $(ROOT_DIR)/$(ZIP_NAME) *
 
 format-source-code:
