@@ -3,59 +3,48 @@
 
 void control_game(void) {
   SDL_Event e;
-  int quit = 0;
 
   // initial field drawing
   update_view();
 
   // MAIN loop
-  while (!quit) {
+  while (1) {
     //  handle events on queue
     while (SDL_PollEvent(&e)) {
-      if (e.type == SDL_QUIT) { // user wants to quit
-        quit = 1;
+      // user wants to quit
+      if (e.type == SDL_QUIT) {
+        return;
       } else if (e.type == SDL_MOUSEBUTTONDOWN) {       // user pressed mouse button
         int x = 0;
         int y = 0;
         get_field_coordinates(e, &x, &y);
-        set_mines(x, y);
+        if ((y < 0) && (e.button.button == SDL_BUTTON_LEFT)
+            && (e.button.x >= (FIELD_WIDTH * (get_field_size_x() - 1)) / 2)
+            && (e.button.x <= (FIELD_WIDTH * (get_field_size_x() + 1)) / 2)
+            && (e.button.y >= (TOP_BAR_HEIGHT - FIELD_HEIGHT) / 2)
+            && (e.button.y <= (TOP_BAR_HEIGHT - FIELD_HEIGHT) / 2 + FIELD_HEIGHT)) {
+          reset_model();
+        } else if (get_game_state() == NORMAL) {
+          place_mines(x, y);
 
-        // update model by given task
-        if (e.button.button == SDL_BUTTON_LEFT) {
-          if (field_static[x][y] == MINE) {
-            field_dynamic[x][y] = EXPLODE;
-            reveal_everything();
-            quit = 1;
-          } else {
-            field_select(x, y);
+          // update model by given task
+          if (e.button.button == SDL_BUTTON_LEFT) {
+            if (field_static[x][y] == MINE) {
+              field_dynamic[x][y] = EXPLODE;
+              reveal_everything();
+            } else {
+              field_select(x, y);
+            }
+          } else if (e.button.button == SDL_BUTTON_RIGHT) {
+            field_flag(x, y);
           }
-
-        } else if (e.button.button == SDL_BUTTON_RIGHT) {
-          field_flag(x, y);
-        }
-        // model is now up to date
-        update_view();
-
-        int mines_flagged_wrong = 0;
-        int mines_unflagged = 0;
-        get_mine_statistic(&mines_flagged_wrong, &mines_unflagged);
-        if ((mines_flagged_wrong == 0) && (mines_unflagged == 0)) {
-          print_top_bar_text("YOU WON!!!");
-          quit = 1;
-        } else if (quit == 1) {
-          print_top_bar_text("YOU LOST!!!");
         }
       }
-    }
-    SDL_Delay(10);
-  }
-
-  // wait for user to quit
-  while (e.type != SDL_QUIT) {
-    while (SDL_PollEvent(&e)) {
-      SDL_Delay(10);
+      // model is now up to date
+      update_view();
     }
   }
+  SDL_Delay(10);
 }
 
 /**
