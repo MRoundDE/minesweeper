@@ -29,7 +29,7 @@ void control_game(void) {
 
           // update model by given task
           if (e.button.button == SDL_BUTTON_LEFT) {
-            if (field_static[x][y] == MINE) {
+            if ((field_dynamic[x][y] != FLAG) && (field_static[x][y] == MINE)) {
               field_dynamic[x][y] = EXPLODE;
               reveal_everything();
             } else {

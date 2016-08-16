@@ -126,27 +126,23 @@ int get_field_size_y(void) {
   return FIELD_SIZE_Y;
 }
 
-void get_mine_statistic(int *mines_flagged_wrong, int *mines_unflagged) {
-  *mines_flagged_wrong = 0;
-  *mines_unflagged = 0;
+game_state_t get_game_state () {
+  int number_hidden_fields = 0;
+  int number_flag_fields = 0;
   for (int x = 0; x < get_field_size_x(); x++) {
     for (int y = 0; y < get_field_size_y(); y++) {
-      if (field_static[x][y] == MINE) {
-        if (field_dynamic[x][y] != FLAG) {
-          *mines_unflagged = *mines_unflagged + 1;
-        }
-      } else if (field_dynamic[x][y] == FLAG) {
-        *mines_flagged_wrong = *mines_flagged_wrong + 1;
+      if (field_dynamic[x][y] == EXPLODE) {
+          game_state = LOOSE;
+      }
+      // count relevant info for win
+      if (field_dynamic[x][y] == FLAG) {
+        number_flag_fields++;
+      } else if (field_dynamic[x][y] == HIDDEN) {
+        number_hidden_fields++;
       }
     }
   }
-}
-
-game_state_t get_game_state () {
-  int mines_flagged_wrong = 0;
-  int mines_unflagged = 0;
-  get_mine_statistic(&mines_flagged_wrong, &mines_unflagged);
-  if ((!reset) && (mines_flagged_wrong == 0) && (mines_unflagged == 0)) {
+  if ((!reset) && (game_state != LOOSE) && (number_hidden_fields + number_flag_fields == NUMBER_OF_MINES)) {
     game_state = WIN;
   }
 

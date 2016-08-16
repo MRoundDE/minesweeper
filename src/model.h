@@ -67,14 +67,6 @@ int get_field_size_x(void);
 int get_field_size_y(void);
 
 /**
- * Generates statistics about mines.
- *
- * @param mines_flagged_wrong Number of wrong flagged mines
- * @param mines_unflagged Number of unflagged mines
- */
-void get_mine_statistic(int *mines_flagged_wrong, int *mines_unflagged);
-
-/**
  * Returns the state of the game.
  */
 game_state_t get_game_state ();
