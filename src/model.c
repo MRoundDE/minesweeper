@@ -132,7 +132,7 @@ game_state_t get_game_state () {
   for (int x = 0; x < get_field_size_x(); x++) {
     for (int y = 0; y < get_field_size_y(); y++) {
       if (field_dynamic[x][y] == EXPLODE) {
-          game_state = LOOSE;
+        game_state = LOOSE;
       }
       // count relevant info for win
       if (field_dynamic[x][y] == FLAG) {
@@ -142,7 +142,8 @@ game_state_t get_game_state () {
       }
     }
   }
-  if ((!reset) && (game_state != LOOSE) && (number_hidden_fields + number_flag_fields == NUMBER_OF_MINES)) {
+  if ((!reset) && (game_state != LOOSE)
+      && (number_hidden_fields + number_flag_fields == NUMBER_OF_MINES)) {
     game_state = WIN;
   }
 

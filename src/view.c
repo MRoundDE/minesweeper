@@ -23,8 +23,8 @@ SDL_Color COLOR_PURPLE = {.r = 200, .g = 0, .b = 200, .a = 255};
 
 SDL_Texture *create_field(const char *text, SDL_Color color,
                           SDL_Color text_color) {
-  SDL_Surface *s = SDL_CreateRGBSurface(0, FIELD_WIDTH, FIELD_HEIGHT, 32, 0, 0, 0,
-                                        0);
+  SDL_Surface *s = SDL_CreateRGBSurface(0, FIELD_WIDTH, FIELD_HEIGHT, 32, 0, 0,
+                                        0, 0);
   SDL_FillRect(s, NULL, SDL_MapRGB(s->format, color.r, color.g, color.b));
   if (text != NULL) {
     SDL_Rect offset = {.x = 20, .y = -10};
