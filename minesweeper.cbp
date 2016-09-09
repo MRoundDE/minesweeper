@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="minesweeper" />
+		<Option platforms="Windows;" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="minesweeper.exe">
+				<Option platforms="Windows;" />
+				<Option output="minesweeper" prefix_auto="1" extension_auto="1" />
+				<Option object_output="build" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-pedantic" />
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-std=c99" />
+					<Add directory="SDL2-2.0.4/i686-w64-mingw32/include" />
+					<Add directory="SDL2-2.0.4/i686-w64-mingw32/include/SDL2" />
+					<Add directory="SDL2_ttf-2.0.14/i686-w64-mingw32/include" />
+				</Compiler>
+				<Linker>
+					<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -mwindows" />
+					<Add directory="SDL2-2.0.4/i686-w64-mingw32/lib" />
+					<Add directory="SDL2_ttf-2.0.14/i686-w64-mingw32/lib" />
+				</Linker>
+				<ExtraCommands>
+					<Add after='cmd /c copy &quot;$(PROJECT_DIR)SDL2-2.0.4\i686-w64-mingw32\bin\SDL2.dll&quot; &quot;$(PROJECT_DIR)SDL2.dll&quot;' />
+					<Add after='cmd /c copy &quot;$(PROJECT_DIR)SDL2_ttf-2.0.14\i686-w64-mingw32\bin\SDL2_ttf.dll&quot; &quot;$(PROJECT_DIR)SDL2_ttf.dll&quot;' />
+					<Add after='cmd /c copy &quot;$(PROJECT_DIR)SDL2_ttf-2.0.14\i686-w64-mingw32\bin\libfreetype-6.dll&quot; &quot;$(PROJECT_DIR)libfreetype-6.dll&quot;' />
+					<Add after='cmd /c copy &quot;$(PROJECT_DIR)SDL2_ttf-2.0.14\i686-w64-mingw32\bin\zlib1.dll&quot; &quot;$(PROJECT_DIR)zlib1.dll&quot;' />
+				</ExtraCommands>
+				<MakeCommands>
+					<Build command="$make -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="src/controller.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/controller.h" />
+		<Unit filename="src/minesweeper.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/model.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/model.h" />
+		<Unit filename="src/view.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/view.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
